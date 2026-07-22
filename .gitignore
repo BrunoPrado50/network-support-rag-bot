@@ -1,0 +1,10 @@
+# Ambiente virtual
+.venv/
+
+# Arquivos gerados pelo Python
+__pycache__/
+*.py[cod]
+
+# Credenciais e segredos
+.env
+.streamlit/secrets.toml
