@@ -10,6 +10,8 @@ from telegram.ext import (
     filters
 )
 
+from prompts import PROMPT_SISTEMA_N1
+
 load_dotenv()
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -20,7 +22,7 @@ if not GROQ_API_KEY:
 if not TELEGRAM_BOT_TOKEN:
     raise RuntimeError("TELEGRAM_BOT_TOKEN não encontrado.")
 
-MAX_MENSAGENS_HISTORICO = 8
+MAX_MENSAGENS_HISTORICO = 20
 
 chat = ChatGroq(
     model="llama-3.1-8b-instant",
@@ -29,7 +31,7 @@ chat = ChatGroq(
 
 def conversar(pergunta: str, historico: list[tuple[str, str]]) -> str:
     mensagens = [
-        ("system", "Você é um assistente."),
+        ("system", PROMPT_SISTEMA_N1),
         *historico,
         ("human", pergunta)
     ]
@@ -37,7 +39,10 @@ def conversar(pergunta: str, historico: list[tuple[str, str]]) -> str:
     return resposta.content
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Bot online 🚀")
+    await update.message.reply_text(
+        "Olá! Sou o NetHelp N1, assistente de triagem para problemas "
+        "de internet. Descreva o que está acontecendo. 🚀"
+    )
 
 async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.chat_data.clear()
