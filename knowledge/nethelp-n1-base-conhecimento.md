@@ -1,7 +1,7 @@
 ---
 document_id: nethelp-n1-base-conhecimento-v1
 title: Base de Conhecimento RAG - NetHelp N1
-version: 1.0
+version: 1.1
 updated_at: 2026-07-23
 language: pt-BR
 scope: Triagem N1 de problemas de internet e rede em ambientes domésticos e pequenos escritórios
@@ -37,7 +37,24 @@ Ordem recomendada:
 7. Interpretar o resultado antes de escolher a próxima etapa.
 8. Encaminhar quando o limite do N1 for atingido, houver risco ou o usuário solicitar atendimento humano.
 
-O teste em outro dispositivo é importante para separar um problema local de um problema que afeta toda a rede. Se somente um dispositivo falha, priorize verificações nesse dispositivo. Se todos falham ao mesmo tempo, priorize modem, roteador, sinal da operadora e disponibilidade do serviço.
+## Isolamento: um dispositivo ou toda a rede
+
+Quando somente um dispositivo apresenta falha e outros dispositivos
+conectados à mesma rede acessam a internet normalmente, o alcance do
+problema provavelmente está limitado ao dispositivo afetado. Isso não
+confirma a causa específica.
+
+Próximos passos N1:
+
+1. confirmar se o dispositivo permanece conectado à rede;
+2. consultar IPv4, máscara, gateway e DNS com `ipconfig /all`;
+3. testar o dispositivo em outra rede, como um hotspot, se disponível.
+
+Não concluir falha de DHCP, DNS ou adaptador sem uma evidência específica.
+
+Quando todos os dispositivos falham ao mesmo tempo, investigar modem,
+roteador, LEDs e possível falha externa. Isso não confirma sozinho uma
+indisponibilidade da operadora.
 
 ## Matriz inicial de interpretação
 
