@@ -20,28 +20,46 @@ if not GROQ_API_KEY:
 if not TELEGRAM_BOT_TOKEN:
     raise RuntimeError("TELEGRAM_BOT_TOKEN não encontrado.")
 
+MAX_MENSAGENS_HISTORICO = 8
+
 chat = ChatGroq(
     model="llama-3.1-8b-instant",
     temperature=0
 )
 
-def conversar(pergunta: str) -> str:
-    resposta = chat.invoke([
+def conversar(pergunta: str, historico: list[tuple[str, str]]) -> str:
+    mensagens = [
         ("system", "Você é um assistente."),
+        *historico,
         ("human", pergunta)
-    ])
+    ]
+    resposta = chat.invoke(mensagens)
     return resposta.content
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Bot online 🚀")
 
+async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.chat_data.clear()
+    await update.message.reply_text("Conversa reiniciada. O histórico foi apagado.")
+
+
 async def responder(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    resposta = conversar(update.message.text)
+    pergunta = update.message.text
+    historico = context.chat_data.setdefault("historico", [])
+
+    resposta = conversar(pergunta, historico)
+
+    historico.append(("human", pergunta))
+    historico.append(("ai", resposta))
+    historico[:] = historico[-MAX_MENSAGENS_HISTORICO:]
+
     await update.message.reply_text(resposta)
 
 def main():
     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("reset", reset))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, responder))
     app.run_polling()
 
