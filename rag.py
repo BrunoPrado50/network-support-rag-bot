@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
+from langchain_core.documents import Document
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_huggingface import HuggingFaceEndpointEmbeddings
 from langchain_text_splitters import (
@@ -20,7 +21,7 @@ CAMINHO_CONHECIMENTO = (
 CAMINHO_INDICE = (
     DIRETORIO_PROJETO
     / "vectorstore"
-    / "nethelp-n1-granite-97m-v1.json"
+    / "nethelp-n1-granite-97m-v2.json"
 )
 
 CABECALHOS_PARA_DIVISAO = [
@@ -107,6 +108,37 @@ def carregar_secoes():
     return secoes
 
 
+def enriquecer_chunks(chunks):
+    chunks_enriquecidos = []
+
+    for chunk in chunks:
+        rotulos = []
+
+        nome_secao = chunk.metadata.get("secao")
+        nome_subsecao = chunk.metadata.get("subsecao")
+
+        if nome_secao:
+            rotulos.append(f"Seção: {nome_secao}")
+
+        if nome_subsecao:
+            rotulos.append(f"Subseção: {nome_subsecao}")
+
+        prefixo = "\n".join(rotulos)
+        conteudo = chunk.page_content
+
+        if prefixo:
+            conteudo = f"{prefixo}\n\n{conteudo}"
+
+        chunks_enriquecidos.append(
+            Document(
+                page_content=conteudo,
+                metadata=chunk.metadata.copy(),
+            )
+        )
+
+    return chunks_enriquecidos
+
+
 def criar_chunks(secoes):
     divisor_recursivo = RecursiveCharacterTextSplitter(
         chunk_size=TAMANHO_CHUNK,
@@ -114,7 +146,8 @@ def criar_chunks(secoes):
         length_function=len,
     )
 
-    chunks = divisor_recursivo.split_documents(secoes)
+    chunks_divididos = divisor_recursivo.split_documents(secoes)
+    chunks = enriquecer_chunks(chunks_divididos)
 
     if secoes:
         document_id = secoes[0].metadata.get(
