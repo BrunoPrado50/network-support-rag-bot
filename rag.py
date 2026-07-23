@@ -1,5 +1,9 @@
+import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+from langchain_core.vectorstores import InMemoryVectorStore
+from langchain_huggingface import HuggingFaceEndpointEmbeddings
 from langchain_text_splitters import (
     MarkdownHeaderTextSplitter,
     RecursiveCharacterTextSplitter,
@@ -21,6 +25,12 @@ CABECALHOS_PARA_DIVISAO = [
 
 TAMANHO_CHUNK = 2000
 SOBREPOSICAO_CHUNK = 200
+
+MODELO_EMBEDDING = (
+    "ibm-granite/granite-embedding-97m-multilingual-r2"
+)
+PROVEDOR_EMBEDDING = "hf-inference"
+QUANTIDADE_PADRAO_RESULTADOS = 3
 
 
 def separar_front_matter(texto):
@@ -114,6 +124,72 @@ def criar_chunks(secoes):
         )
 
     return chunks
+
+
+def criar_embeddings():
+    load_dotenv()
+
+    token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
+
+    if not token:
+        raise RuntimeError(
+            "HUGGINGFACEHUB_API_TOKEN não encontrado."
+        )
+
+    return HuggingFaceEndpointEmbeddings(
+        model=MODELO_EMBEDDING,
+        task="feature-extraction",
+        provider=PROVEDOR_EMBEDDING,
+        huggingfacehub_api_token=token,
+    )
+
+
+def criar_banco_vetorial(chunks):
+    if not chunks:
+        raise ValueError(
+            "Não é possível criar o banco vetorial sem chunks."
+        )
+
+    embeddings = criar_embeddings()
+
+    banco_vetorial = InMemoryVectorStore(
+        embedding=embeddings
+    )
+
+    ids = [
+        chunk.metadata["chunk_id"]
+        for chunk in chunks
+    ]
+
+    banco_vetorial.add_documents(
+        documents=chunks,
+        ids=ids,
+    )
+
+    return banco_vetorial
+
+
+def buscar_chunks(
+    banco_vetorial,
+    pergunta,
+    quantidade=QUANTIDADE_PADRAO_RESULTADOS,
+):
+    pergunta = pergunta.strip()
+
+    if not pergunta:
+        raise ValueError(
+            "A pergunta de busca não pode estar vazia."
+        )
+
+    if quantidade < 1:
+        raise ValueError(
+            "A quantidade de resultados deve ser maior que zero."
+        )
+
+    return banco_vetorial.similarity_search_with_score(
+        pergunta,
+        k=quantidade,
+    )
 
 
 def exibir_diagnostico(secoes, chunks, limite=5):
