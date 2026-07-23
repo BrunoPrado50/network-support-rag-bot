@@ -8,3 +8,6 @@ __pycache__/
 # Credenciais e segredos
 .env
 .streamlit/secrets.toml
+
+# Índice vetorial gerado
+vectorstore/

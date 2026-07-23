@@ -17,6 +17,12 @@ CAMINHO_CONHECIMENTO = (
     / "nethelp-n1-base-conhecimento.md"
 )
 
+CAMINHO_INDICE = (
+    DIRETORIO_PROJETO
+    / "vectorstore"
+    / "nethelp-n1-granite-97m-v1.json"
+)
+
 CABECALHOS_PARA_DIVISAO = [
     ("#", "titulo"),
     ("##", "secao"),
@@ -167,6 +173,27 @@ def criar_banco_vetorial(chunks):
     )
 
     return banco_vetorial
+
+
+def salvar_banco_vetorial(banco_vetorial):
+    banco_vetorial.dump(str(CAMINHO_INDICE))
+
+    return CAMINHO_INDICE
+
+
+def carregar_banco_vetorial():
+    if not CAMINHO_INDICE.exists():
+        raise FileNotFoundError(
+            f"Índice vetorial não encontrado: "
+            f"{CAMINHO_INDICE}"
+        )
+
+    embeddings = criar_embeddings()
+
+    return InMemoryVectorStore.load(
+        str(CAMINHO_INDICE),
+        embedding=embeddings,
+    )
 
 
 def buscar_chunks(
