@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from telegram import Update
 from telegram.ext import (
@@ -9,8 +10,15 @@ from telegram.ext import (
     filters
 )
 
+load_dotenv()
+
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+if not GROQ_API_KEY:
+    raise RuntimeError("GROQ_API_KEY não encontrada.")
+
+if not TELEGRAM_BOT_TOKEN:
+    raise RuntimeError("TELEGRAM_BOT_TOKEN não encontrado.")
 
 chat = ChatGroq(
     model="llama-3.1-8b-instant",
