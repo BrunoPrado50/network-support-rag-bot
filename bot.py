@@ -12,7 +12,7 @@ from telegram.ext import (
 )
 
 from prompts import PROMPT_SISTEMA_N1
-from rag import buscar_chunks, carregar_banco_vetorial
+from rag import buscar_chunks, carregar_ou_criar_banco_vetorial
 
 load_dotenv()
 
@@ -157,7 +157,7 @@ async def responder(
 
 
 def main():
-    banco_vetorial = carregar_banco_vetorial()
+    banco_vetorial = carregar_ou_criar_banco_vetorial()
 
     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
     app.bot_data["banco_vetorial"] = banco_vetorial

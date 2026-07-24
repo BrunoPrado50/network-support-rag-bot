@@ -209,6 +209,11 @@ def criar_banco_vetorial(chunks):
 
 
 def salvar_banco_vetorial(banco_vetorial):
+    CAMINHO_INDICE.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
     banco_vetorial.dump(str(CAMINHO_INDICE))
 
     return CAMINHO_INDICE
@@ -227,6 +232,19 @@ def carregar_banco_vetorial():
         str(CAMINHO_INDICE),
         embedding=embeddings,
     )
+
+
+def carregar_ou_criar_banco_vetorial():
+    if CAMINHO_INDICE.exists():
+        return carregar_banco_vetorial()
+
+    secoes = carregar_secoes()
+    chunks = criar_chunks(secoes)
+    banco_vetorial = criar_banco_vetorial(chunks)
+
+    salvar_banco_vetorial(banco_vetorial)
+
+    return banco_vetorial
 
 
 def buscar_chunks(
