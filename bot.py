@@ -156,21 +156,34 @@ async def responder(
     await update.message.reply_text(resposta)
 
 
-def main():
+def criar_aplicacao_telegram(usar_updater: bool = True):
     banco_vetorial = carregar_ou_criar_banco_vetorial()
 
-    app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
-    app.bot_data["banco_vetorial"] = banco_vetorial
+    construtor = ApplicationBuilder().token(
+        TELEGRAM_BOT_TOKEN
+    )
 
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("reset", reset))
-    app.add_handler(
+    if not usar_updater:
+        construtor = construtor.updater(None)
+
+    aplicacao = construtor.build()
+    aplicacao.bot_data["banco_vetorial"] = banco_vetorial
+
+    aplicacao.add_handler(CommandHandler("start", start))
+    aplicacao.add_handler(CommandHandler("reset", reset))
+    aplicacao.add_handler(
         MessageHandler(
             filters.TEXT & ~filters.COMMAND,
             responder,
         )
     )
-    app.run_polling()
+
+    return aplicacao
+
+
+def main():
+    aplicacao = criar_aplicacao_telegram()
+    aplicacao.run_polling()
 
 
 if __name__ == "__main__":
