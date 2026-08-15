@@ -6,6 +6,14 @@ Protótipo funcional de um assistente de triagem N1 para problemas de conexão �
 
 Orientar verificações iniciais simples e seguras, evitar ações incompatíveis com o problema relatado e preparar um resumo para encaminhamento ao suporte humano quando necessário.
 
+## Demonstração
+
+A aplicação está hospedada no plano gratuito do Render e pode entrar em modo de espera após um período sem uso. Para testar:
+
+1. Acesse [Ativar demonstração](https://network-support-rag-bot.onrender.com/health).
+2. Aguarde a página informar `"status": "ok"`.
+3. Abra [Conversar com o NetHelp N1 no Telegram](https://t.me/NetHelpN1Bot).
+
 ## Funcionalidades
 
 * Atendimento por meio do Telegram;
@@ -27,14 +35,6 @@ Orientar verificações iniciais simples e seguras, evitar ações incompatívei
 * Telegram Bot API
 * Starlette e Uvicorn
 * Render
-
-## Demonstração
-
-A aplicação está hospedada no plano gratuito do Render e pode entrar em modo de espera após um período sem uso. Para testar:
-
-1. Acesse [Ativar demonstração](https://network-support-rag-bot.onrender.com/health).
-2. Aguarde a página informar `"status": "ok"`.
-3. Abra [Conversar com o NetHelp N1 no Telegram](https://t.me/NetHelpN1Bot).
 
 ## Como funciona
 
