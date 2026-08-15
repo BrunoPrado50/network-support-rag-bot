@@ -28,6 +28,14 @@ Orientar verificações iniciais simples e seguras, evitar ações incompatívei
 * Starlette e Uvicorn
 * Render
 
+## Demonstração
+
+A aplicação está hospedada no plano gratuito do Render e pode entrar em modo de espera após um período sem uso. Para testar:
+
+1. Acesse [Ativar demonstração](https://network-support-rag-bot.onrender.com/health).
+2. Aguarde a página informar `"status": "ok"`.
+3. Abra [Conversar com o NetHelp N1 no Telegram](https://t.me/NetHelpN1Bot).
+
 ## Como funciona
 
 A mensagem recebida pelo Telegram é combinada ao contexto recente da conversa. O sistema consulta uma base de conhecimento por meio de busca semântica e utiliza uma LLM para produzir a próxima pergunta, orientação ou resumo de encaminhamento.
