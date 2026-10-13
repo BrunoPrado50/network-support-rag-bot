@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from langchain_core.documents import Document
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-#from langchain_huggingface import HuggingFaceEndpointEmbeddings
+
 from langchain_text_splitters import (
     MarkdownHeaderTextSplitter,
     RecursiveCharacterTextSplitter,
@@ -18,13 +18,7 @@ CAMINHO_CONHECIMENTO = (
     / "knowledge"
     / "nethelp-n1-base-conhecimento.md"
 )
-'''
-CAMINHO_INDICE = (
-    DIRETORIO_PROJETO
-    / "vectorstore"
-    / "nethelp-n1-granite-97m-v2.json"
-)
-'''
+
 CAMINHO_INDICE = (
     DIRETORIO_PROJETO
     / "vectorstore"
@@ -40,10 +34,7 @@ CABECALHOS_PARA_DIVISAO = [
 TAMANHO_CHUNK = 2000
 SOBREPOSICAO_CHUNK = 200
 
-MODELO_EMBEDDING = (
-    "ibm-granite/granite-embedding-97m-multilingual-r2"
-)
-#PROVEDOR_EMBEDDING = "hf-inference"
+
 MODELO_EMBEDDING = "gemini-embedding-001"
 QUANTIDADE_PADRAO_RESULTADOS = 3
 
@@ -172,24 +163,6 @@ def criar_chunks(secoes):
 
     return chunks
 
-'''
-def criar_embeddings():
-    load_dotenv()
-
-    token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
-
-    if not token:
-        raise RuntimeError(
-            "HUGGINGFACEHUB_API_TOKEN não encontrado."
-        )
-
-    return HuggingFaceEndpointEmbeddings(
-        model=MODELO_EMBEDDING,
-        task="feature-extraction",
-        provider=PROVEDOR_EMBEDDING,
-        huggingfacehub_api_token=token,
-    )
-'''
 
 def criar_embeddings():
     load_dotenv()
